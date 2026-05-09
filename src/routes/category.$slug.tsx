@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { heroCategories } from "@/data/heroCategories";
+import { getCatalogCategoryBySlug, getCatalogProductsByCategorySlug } from "@/data/catalog";
 
 export const Route = createFileRoute("/category/$slug")({
   component: CategoryPage,
@@ -7,7 +7,8 @@ export const Route = createFileRoute("/category/$slug")({
 
 function CategoryPage() {
   const { slug } = Route.useParams();
-  const category = heroCategories.find((item) => item.slug === slug);
+  const category = getCatalogCategoryBySlug(slug);
+  const products = getCatalogProductsByCategorySlug(slug);
 
   if (!category) {
     return (
@@ -27,19 +28,19 @@ function CategoryPage() {
         <a href="/" className="text-sm font-semibold text-brand-red hover:underline">Retour</a>
 
         <h1 className="mt-4 font-display text-4xl font-bold tracking-tight text-foreground md:text-5xl">
-          Categorie: <span className={category.color}>{category.word}</span>
+          Categorie: <span className={category.accentClass}>{category.label}</span>
         </h1>
 
         <p className="mt-3 max-w-2xl text-muted-foreground">
-          Tous les produits de cette categorie.
+          {category.description}
         </p>
 
         <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-          {category.images.map((src, i) => (
-            <article key={`${category.slug}-${i}`} className="overflow-hidden rounded-2xl border border-border bg-card/75 shadow-[0_18px_38px_-24px_rgba(84,76,38,0.28)] backdrop-blur-sm">
-              <img src={src} alt={`${category.word} ${i + 1}`} loading="lazy" className="h-64 w-full object-cover" />
+          {products.map((product) => (
+            <article key={product.id} className="overflow-hidden rounded-2xl border border-border bg-card/75 shadow-[0_18px_38px_-24px_rgba(84,76,38,0.28)] backdrop-blur-sm">
+              <img src={product.image} alt={product.name} loading="lazy" className="h-64 w-full object-cover" />
               <div className="px-3 py-2">
-                <p className="text-sm font-semibold text-foreground">Produit {i + 1}</p>
+                <p className="text-sm font-semibold text-foreground">{product.name}</p>
               </div>
             </article>
           ))}

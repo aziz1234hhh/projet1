@@ -1,20 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArViewer } from "@/components/ArViewer";
 import { Reveal } from "@/components/Reveal";
-
-import salonB1096 from "@/assets/salon/art-abstract-warm.jpg";
-import salonB1099 from "@/assets/salon/art-botanical.jpg";
-import salonB1126 from "@/assets/salon/art-desert.jpg";
-import salonB1292 from "@/assets/salon/art-figure.jpg";
-import salonB1300 from "@/assets/salon/art-geometric.jpg";
-import salonB275 from "@/assets/salon/art-vintage.jpg";
-
-import cuisineCoffee from "@/assets/Cuisine/WhatsApp Image 2026-04-19 at 23.02.14 (1).jpeg";
-import cuisineLemon from "@/assets/Cuisine/WhatsApp Image 2026-04-19 at 23.02.15.jpeg";
-import cuisineOlive from "@/assets/Cuisine/WhatsApp Image 2026-04-19 at 23.02.18.jpeg";
-import cuisineSpices from "@/assets/Cuisine/WhatsApp Image 2026-04-19 at 23.02.19.jpeg";
-import cuisinePottery from "@/assets/Cuisine/WhatsApp Image 2026-04-19 at 23.02.20.jpeg";
-import cuisineHerbs from "@/assets/Cuisine/WhatsApp Image 2026-04-19 at 23.02.21.jpeg";
+import {
+  boutiqueFilters,
+  catalogProducts,
+  defaultFrameOptions,
+  defaultSizeOptions,
+  priceBySize,
+  type BoutiqueFilter,
+  type CatalogProduct,
+} from "@/data/catalog";
 
 import collection1 from "@/assets/collections/81887183-9b18-4264-a5ba-4b9a8f37c27b.jpg";
 import collection2 from "@/assets/collections/be538121-a7e5-44ab-8c1e-0ff8efdc9151.jpg";
@@ -40,89 +35,27 @@ const collectionStories = [
   },
 ];
 
-type Category = "Tout" | "Salon" | "Cuisine";
-
-const dimensionOptions = [
-  { label: "20 x 30 cm", value: "20x30" },
-  { label: "30 x 40 cm", value: "30x40" },
-  { label: "40 x 60 cm", value: "40x60" },
-  { label: "50 x 70 cm", value: "50x70" },
-  { label: "60 x 90 cm", value: "60x90" },
-  { label: "80 x 120 cm", value: "80x120" },
-  { label: "100 x 150 cm", value: "100x150" },
-];
-
-const frameOptions = [
-  "Toile sans cadre exterieur",
-  "Toile avec cadre exterieur dore",
-  "Toile avec cadre exterieur argente",
-  "Toile avec cadre exterieur noir",
-  "Toile avec cadre exterieur blanc",
-];
-
-type Product = {
-  id: string;
-  name: string;
-  ref: string;
-  basePrice: number;
-  category: Exclude<Category, "Tout">;
-  image: string;
-  badge?: string;
-};
-
-const priceBySize: Record<string, number> = {
-  "20x30": 1,
-  "30x40": 1.3,
-  "40x60": 1.6,
-  "50x70": 2,
-  "60x90": 2.5,
-  "80x120": 3.2,
-  "100x150": 4,
-};
-
-const products: Product[] = [
-  { id: "s1", name: "Fleurs Blanches & Or", ref: "B1096", basePrice: 150, category: "Salon", image: salonB1096, badge: "Nouveau" },
-  { id: "s2", name: "Roses Dorees", ref: "B1099", basePrice: 150, category: "Salon", image: salonB1099 },
-  { id: "s3", name: "Cerisier en Fleurs", ref: "B1126", basePrice: 150, category: "Salon", image: salonB1126, badge: "Best-seller" },
-  { id: "s4", name: "Fleurs Elegantes", ref: "B1292", basePrice: 150, category: "Salon", image: salonB1292, badge: "Edition limitee" },
-  { id: "s5", name: "Branche Doree", ref: "B1300", basePrice: 150, category: "Salon", image: salonB1300 },
-  { id: "s6", name: "Vagues Abstraites", ref: "B275", basePrice: 150, category: "Salon", image: salonB275 },
-  { id: "c1", name: "Cafe Traditionnel", ref: "C001", basePrice: 120, category: "Cuisine", image: cuisineCoffee, badge: "Nouveau" },
-  { id: "c2", name: "Citrons Mediterraneens", ref: "C002", basePrice: 120, category: "Cuisine", image: cuisineLemon },
-  { id: "c3", name: "Huile d'Olive & Pain", ref: "C003", basePrice: 120, category: "Cuisine", image: cuisineOlive, badge: "Best-seller" },
-  { id: "c4", name: "Epices Marocaines", ref: "C004", basePrice: 120, category: "Cuisine", image: cuisineSpices },
-  { id: "c5", name: "Poterie Artisanale", ref: "C005", basePrice: 120, category: "Cuisine", image: cuisinePottery, badge: "Edition limitee" },
-  { id: "c6", name: "Mortier aux Herbes", ref: "C006", basePrice: 120, category: "Cuisine", image: cuisineHerbs },
-];
-
-const categories: Category[] = ["Tout", "Salon", "Cuisine"];
-
 export function ProductShowcase() {
-  const [active, setActive] = useState<Category>("Tout");
+  const [active, setActive] = useState<BoutiqueFilter>("Tout");
   const [selectedSize, setSelectedSize] = useState<Record<string, string>>({});
   const [selectedFrame, setSelectedFrame] = useState<Record<string, string>>({});
   const [qtyByProduct, setQtyByProduct] = useState<Record<string, number>>({});
   const [liked, setLiked] = useState<Record<string, boolean>>({});
   const [arImage, setArImage] = useState<string | null>(null);
-  const [detailProduct, setDetailProduct] = useState<Product | null>(null);
+  const [detailProduct, setDetailProduct] = useState<CatalogProduct | null>(null);
   const [collectionIndex, setCollectionIndex] = useState(0);
 
   const filtered = useMemo(
-    () => (active === "Tout" ? products : products.filter((p) => p.category === active)),
+    () =>
+      active === "Tout"
+        ? catalogProducts
+        : catalogProducts.filter((product) => product.category === active),
     [active],
   );
 
   const getPrice = (basePrice: number, size: string) => {
     const multiplier = priceBySize[size] ?? 1;
     return Math.round(basePrice * multiplier);
-  };
-
-  const getDescription = (p: Product) => {
-    if (p.category === "Salon") {
-      return "Un tableau decoratif pense pour sublimer votre salon avec une touche elegante, lumineuse et contemporaine.";
-    }
-
-    return "Une piece artistique ideale pour la cuisine, chaleureuse et expressive, inspiree des matieres et des couleurs du quotidien.";
   };
 
   useEffect(() => {
@@ -162,7 +95,7 @@ export function ProductShowcase() {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {categories.map((cat) => {
+            {boutiqueFilters.map((cat) => {
               const isActive = active === cat;
 
               return (
@@ -185,7 +118,8 @@ export function ProductShowcase() {
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((p, i) => {
             const isLiked = !!liked[p.id];
-            const size = selectedSize[p.id] ?? dimensionOptions[2].value;
+            const defaultSize = p.sizes[2]?.value ?? defaultSizeOptions[0].value;
+            const size = selectedSize[p.id] ?? defaultSize;
 
             return (
               <Reveal key={p.id} delay={i * 70} className="group">
@@ -295,7 +229,7 @@ export function ProductShowcase() {
                         {p.category} · Ref: {p.ref}
                       </p>
                       <p className="mt-3 text-sm text-muted-foreground">
-                        {getDescription(p)}
+                        {p.description}
                       </p>
                     </div>
                     <div className="text-right">
@@ -431,16 +365,16 @@ export function ProductShowcase() {
               <p className="mt-2 font-display text-3xl font-semibold text-foreground">
                 {getPrice(
                   detailProduct.basePrice,
-                  selectedSize[detailProduct.id] ?? dimensionOptions[2].value,
+                  selectedSize[detailProduct.id] ?? detailProduct.sizes[2]?.value ?? defaultSizeOptions[0].value,
                 )} DH
               </p>
 
               <div className="mt-6">
                 <p className="text-sm font-semibold text-foreground">Taille du tableau</p>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {dimensionOptions.map((dim) => {
+                  {detailProduct.sizes.map((dim) => {
                     const isSel =
-                      (selectedSize[detailProduct.id] ?? dimensionOptions[2].value) === dim.value;
+                      (selectedSize[detailProduct.id] ?? detailProduct.sizes[2]?.value ?? defaultSizeOptions[0].value) === dim.value;
 
                     return (
                       <button
@@ -464,8 +398,9 @@ export function ProductShowcase() {
               <div className="mt-6">
                 <p className="text-sm font-semibold text-foreground">Type d'encadrement</p>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {frameOptions.map((frame) => {
-                    const isSel = (selectedFrame[detailProduct.id] ?? frameOptions[0]) === frame;
+                  {detailProduct.frames.map((frame) => {
+                    const isSel =
+                      (selectedFrame[detailProduct.id] ?? detailProduct.frames[0] ?? defaultFrameOptions[0]) === frame;
 
                     return (
                       <button
@@ -487,7 +422,7 @@ export function ProductShowcase() {
               </div>
 
               <p className="mt-6 text-base leading-relaxed text-muted-foreground">
-                {getDescription(detailProduct)}
+                {detailProduct.description}
               </p>
 
               <p className="mt-4 text-sm text-muted-foreground">
