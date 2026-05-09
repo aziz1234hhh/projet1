@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { heroCategories as categories } from "@/data/heroCategories";
+import { Reveal } from "@/components/Reveal";
 
 // Per-column layout + parallax speed (px translation per scroll px)
 const columns = [
@@ -13,6 +14,11 @@ const columns = [
 const CYCLE_MS = 4200;
 const STAGGER_MS = 110;
 const OUT_DURATION = 500;
+const heroHighlights = [
+  "Palette douce et lumineuse",
+  "Formats sur demande",
+  "Livraison rapide en Tunisie",
+];
 
 export function AnimatedHero() {
   const [index, setIndex] = useState(0);
@@ -134,18 +140,16 @@ export function AnimatedHero() {
   return (
     <section
       ref={sectionRef}
-      className="relative isolate overflow-hidden bg-background"
+      className="relative isolate overflow-hidden bg-background pb-4"
     >
-      {/* Luxe warm gradient backdrop */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10"
         style={{
           background:
-            "radial-gradient(60% 50% at 50% 0%, color-mix(in oklab, var(--brand-red) 14%, transparent), transparent 70%), radial-gradient(50% 40% at 90% 30%, color-mix(in oklab, var(--accent-orange) 22%, transparent), transparent 70%), radial-gradient(45% 40% at 10% 60%, color-mix(in oklab, var(--accent-green) 16%, transparent), transparent 70%)",
+            "radial-gradient(60% 50% at 50% 0%, color-mix(in oklab, var(--accent-yellow) 70%, transparent), transparent 72%), radial-gradient(45% 38% at 88% 22%, color-mix(in oklab, var(--accent-orange) 26%, transparent), transparent 72%), radial-gradient(38% 32% at 12% 58%, color-mix(in oklab, var(--accent-green) 20%, transparent), transparent 68%)",
         }}
       />
-      {/* subtle grain via layered gradients */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 opacity-[0.35] mix-blend-multiply"
@@ -154,10 +158,23 @@ export function AnimatedHero() {
             "linear-gradient(180deg, transparent 0%, color-mix(in oklab, var(--background) 100%, transparent) 100%)",
         }}
       />
-      {/* Top headline */}
-      <div className="relative z-20 mx-auto max-w-5xl px-6 pt-16 text-center md:pt-24">
-        <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight text-foreground md:text-6xl lg:text-7xl">
-          Trouvez votre prochain
+      <div
+        aria-hidden
+        className="animate-glow-shift pointer-events-none absolute left-[8%] top-28 -z-10 h-40 w-40 rounded-full bg-accent-green/20 blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="animate-glow-shift pointer-events-none absolute bottom-12 right-[10%] -z-10 h-48 w-48 rounded-full bg-accent-orange/18 blur-3xl"
+      />
+
+      <Reveal className="relative z-20 mx-auto max-w-5xl px-6 pt-16 text-center md:pt-24">
+        <div className="inline-flex items-center gap-2 rounded-full border border-brand-red/15 bg-card/85 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-red shadow-sm">
+          <span className="h-2 w-2 rounded-full bg-brand-red" />
+          Art mural et decoration
+        </div>
+
+        <h1 className="mt-6 font-display text-4xl font-bold leading-[1.02] tracking-tight text-foreground md:text-6xl lg:text-7xl">
+          L'art qui transforme
           <br />
           <span className="inline-block min-h-[1.2em]">
             <span
@@ -169,7 +186,37 @@ export function AnimatedHero() {
           </span>
         </h1>
 
-        {/* dots */}
+        <p className="mx-auto mt-6 max-w-3xl text-base leading-7 text-muted-foreground md:text-lg">
+          Des tableaux decoratifs aux tons mediterraneens et aux details soignes,
+          pour donner une presence plus douce, plus elegante et plus vivante a vos espaces.
+        </p>
+
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <a
+            href="#galerie"
+            className="interactive-sheen inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background shadow-lg transition-transform hover:-translate-y-0.5"
+          >
+            Decouvrir la galerie
+          </a>
+          <a
+            href="#nouveautes"
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-card/90 px-6 py-3 text-sm font-semibold text-foreground transition hover:border-brand-red/35 hover:bg-card"
+          >
+            Voir les collections
+          </a>
+        </div>
+
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          {heroHighlights.map((item) => (
+            <span
+              key={item}
+              className="rounded-full border border-border/90 bg-background/70 px-4 py-2 text-xs font-medium text-foreground/80 backdrop-blur-sm"
+            >
+              {item}
+            </span>
+          ))}
+        </div>
+
         <div className="mt-8 flex items-center justify-center gap-2">
           {categories.map((_, i) => (
             <button
@@ -177,15 +224,34 @@ export function AnimatedHero() {
               onClick={() => queueCategorySwitch(i)}
               aria-label={`Show category ${i + 1}`}
               className={`h-2 rounded-full transition-all duration-300 ${
-                i === index ? "w-6 bg-foreground" : "w-2 bg-foreground/25"
+                i === index ? "w-8 bg-foreground" : "w-2 bg-foreground/25"
               }`}
             />
           ))}
         </div>
-      </div>
+      </Reveal>
 
-      {/* Image grid */}
       <div className="relative z-10 mx-auto mt-12 max-w-7xl px-3 pb-24 md:px-6 md:pb-32">
+        <div className="pointer-events-none absolute left-2 top-8 hidden md:block">
+          <div className="surface-panel animate-float-gentle rounded-[1.5rem] px-5 py-4">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brand-red">
+              Collection signature
+            </p>
+            <p className="mt-2 max-w-[12rem] font-display text-xl leading-tight text-foreground">
+              Pieces encadrees pensees pour le salon et la cuisine.
+            </p>
+          </div>
+        </div>
+
+        <div className="pointer-events-none absolute bottom-28 right-2 hidden md:block">
+          <div className="surface-panel animate-float-gentle-delayed rounded-[1.5rem] px-5 py-4">
+            <p className="text-sm font-semibold text-foreground">Apercu AR disponible</p>
+            <p className="mt-1 max-w-[11rem] text-sm leading-6 text-muted-foreground">
+              Visualisez chaque toile chez vous avant de commander.
+            </p>
+          </div>
+        </div>
+
         <div className="grid grid-cols-2 gap-3 md:grid-cols-5 md:gap-5">
           {columns.map((col, i) => {
             const src = current.images[i];
@@ -209,7 +275,7 @@ export function AnimatedHero() {
                 }}
               >
                 <div
-                  className={`overflow-hidden rounded-3xl bg-muted shadow-[0_10px_40px_-15px_rgba(0,0,0,0.25)] ${col.height}`}
+                  className={`surface-card interactive-sheen overflow-hidden rounded-3xl ${col.height}`}
                 >
                   <img
                     key={`${index}-${i}-${phase}`}
@@ -233,10 +299,10 @@ export function AnimatedHero() {
         <div className="pointer-events-none absolute inset-x-0 bottom-8 md:bottom-10 flex justify-center">
           <a
             href={`/category/${current.slug}`}
-            className="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-brand-red px-6 py-3 text-sm font-semibold text-white shadow-lg transition-transform hover:scale-[1.03]"
+            className="interactive-sheen pointer-events-auto inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background shadow-lg transition-transform hover:-translate-y-0.5"
             aria-label={`Explorer la categorie ${current.word}`}
           >
-            Explorer categorie
+            Explorer la categorie
           </a>
         </div>
       </div>

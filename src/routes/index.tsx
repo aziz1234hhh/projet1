@@ -3,6 +3,8 @@ import { AnimatedHero } from "@/components/AnimatedHero";
 import { SiteNav } from "@/components/SiteNav";
 import { ProductShowcase } from "@/components/ProductShowcase";
 import { LatestDecor } from "@/components/LatestDecor";
+import { Testimonials } from "@/components/Testimonials";
+import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 import { SiteFooter } from "@/components/SiteFooter";
 
 export const Route = createFileRoute("/")({
@@ -11,12 +13,14 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <main className="min-h-screen bg-background font-[Inter,sans-serif]">
+    <main className="min-h-screen overflow-x-clip bg-background">
       <SiteNav />
       <AnimatedHero />
       <ProductShowcase />
       <LatestDecor />
+      <Testimonials />
       <SiteFooter />
+      <FloatingWhatsApp />
     </main>
   );
 }
